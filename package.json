@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.20",
+    "typeorm-cli": "^1.0.7",
+    "typescript": "^5.7.2"
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm-cli": "ts-node node_modules/typeorm/cli.js --dataSource src/db/dataSource.ts",
+    "db:sync": "npm run typeorm-cli -- migration:generate -p src/db/migrations/sync",
+    "db:migrate:up": "npm run typeorm-cli -- migration:run",
+    "db:migrate:down": "npm run typeorm-cli -- migration:revert",
+    "migration:generate": "npm run typeorm:cli -- migration:generate -d src/db/migrations -n",
+    "db:migrate:show": "npm run typeorm:cli -- migration:show --dataSource src/db/dataSource.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
