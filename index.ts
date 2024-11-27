@@ -1,9 +1,12 @@
 import * as express from "express";
 import { AppDataSource } from "./src/db/dataSource";
+import allRouter from "./src/routes/allRoutes";
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(allRouter)
 
 AppDataSource.initialize()
   .then(async () => {
@@ -12,7 +15,7 @@ AppDataSource.initialize()
   .catch((error) => console.log(error));
 
 app.listen(3000, function () {
-  console.log("Сервер одключен");
+  console.log("Сервер подключен");
 });
 
 
