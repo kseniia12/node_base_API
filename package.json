@@ -10,12 +10,12 @@
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
     "typeorm-cli": "^1.0.7",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "yup": "^1.4.0"
   },
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
