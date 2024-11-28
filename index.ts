@@ -1,4 +1,6 @@
 import * as express from "express";
+import * as dotenv from "dotenv"
+dotenv.config();
 import { AppDataSource } from "./src/db/dataSource";
 import allRouter from "./src/routes/allRoutes";
 
@@ -14,7 +16,7 @@ AppDataSource.initialize()
   })
   .catch((error) => console.log(error));
 
-app.listen(3000, function () {
+app.listen(process.env.PORT, function () {
   console.log("Сервер подключен");
 });
 

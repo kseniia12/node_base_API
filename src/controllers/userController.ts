@@ -1,9 +1,21 @@
+import { checkDataUser } from "../utils/checkDataUser";
+import { generateAccessToken } from "../middlewares/generateAccessToken";
 import { createUsersServices, getAllUsersServices, getUsersByIdServices, editUsersByIdServices, deleteUserByIdServices, loginUsersServices } from "../services/userServices";
+import {hashPassword} from "../utils/hashing"
+const jwt = require('jsonwebtoken');
 
 export const createUser =  async (req, res) => {
     try {
-      const user = await createUsersServices(req.body);
-      res.status(201).json(user);
+      const {fullName, email, password, dob} = req.body
+      const hashedPassword = hashPassword(password); 
+      const user = await createUsersServices({ fullName, email, password: hashedPassword, dob });
+      if (!user){
+        throw new Error ("Не получилось зарегестрироваться")
+      }
+      const token = generateAccessToken({ username: req.body.username });
+      console.log("token", token)
+
+      res.status(201).json({user, token});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -11,8 +23,14 @@ export const createUser =  async (req, res) => {
 
 export const loginUser =  async (req, res) => {
   try {
-    const user = await loginUsersServices(req.body);
-    res.status(201).json(user);
+    const {email, password} = req.body
+    const user = await loginUsersServices(email, password);
+    if (!user){
+      throw new Error ("Не получилось авторизоваться")
+    }
+    const token = generateAccessToken({ username: req.body.username });
+    const checkUser = checkDataUser(user)
+    res.status(201).json({user, token});
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
