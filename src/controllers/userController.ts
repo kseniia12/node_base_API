@@ -1,60 +1,84 @@
+import { Request, Response } from "express";
+
 import { checkDataUser } from "../utils/checkDataUser";
 import { generateAccessToken } from "../middlewares/generateAccessToken";
-import { createUsersServices, getAllUsersServices, getUsersByIdServices, editUsersByIdServices, deleteUserByIdServices, loginUsersServices } from "../services/userServices";
-import {hashPassword} from "../utils/hashing"
-const jwt = require('jsonwebtoken');
+import {
+  createUsersServices,
+  editUsersByIdServices,
+  deleteUserByIdServices,
+  loginUsersServices,
+} from "../services/userServices";
+import { hashPassword } from "../utils/hashing";
 
-export const createUser =  async (req, res) => {
-    try {
-      const {fullName, email, password, dob} = req.body
-      const hashedPassword = hashPassword(password); 
-      const user = await createUsersServices({ fullName, email, password: hashedPassword, dob });
-      if (!user){
-        throw new Error ("Не получилось зарегестрироваться")
-      }
-      const token = generateAccessToken({ username: req.body.username });
-      console.log("token", token)
-
-      res.status(201).json({user, token});
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-};
-
-export const loginUser =  async (req, res) => {
+export const createUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
-    const {email, password} = req.body
-    const user = await loginUsersServices(email, password);
-    if (!user){
-      throw new Error ("Не получилось авторизоваться")
-    }
-    const token = generateAccessToken({ username: req.body.username });
-    const checkUser = checkDataUser(user)
-    res.status(201).json({user, token});
+    const { fullName, email, password, dob } = req.body;
+    const hashedPassword = hashPassword(password);
+    const user = await createUsersServices({
+      fullName,
+      email,
+      password: hashedPassword,
+      dob,
+    });
+    const token = generateAccessToken(user);
+    res.status(201).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-export const getAllUsers =  async (req, res) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await getAllUsersServices();
-    res.json(users);
+    const { email, password } = req.body;
+    const user = await loginUsersServices(email, password);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const checkUser = checkDataUser(user);
+    const token = generateAccessToken(checkUser);
+    res.status(201).json({ user, token });
+  } catch (error) {
+    let status = 500;
+    if ((error.message = "User not found")) {
+      status = 403;
+    }
+    res.status(status).json({ error: error.message });
+  }
+};
+
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  const user = req.user;
+  try {
+    console.log("dededed", user);
+    const checkUser = checkDataUser(user);
+    res.json(checkUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const getUserById =  async (req, res) => {
+export const getUserById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
-    const user = await getUsersByIdServices(req.params.id);
+    const user = req.user;
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const editUserById =  async (req, res) => {
+export const editUserById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const user = await editUsersByIdServices(req.params.id, req.body);
     res.json(user);
@@ -63,7 +87,10 @@ export const editUserById =  async (req, res) => {
   }
 };
 
-export const deleteUserById = async (req, res) => {
+export const deleteUserById = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     await deleteUserByIdServices(req.params.id);
     res.status(204).send();

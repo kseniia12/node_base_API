@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken');
+import { UserEntity } from "src/db/entities/user.entity";
+import * as jwt from "jsonwebtoken";
 
-export const generateAccessToken = (username) => {
-  console.log(">>",jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' }))
-    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-  }
-  
+export const generateAccessToken = (user: Partial<UserEntity>) => {
+  return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "1800s" });
+};

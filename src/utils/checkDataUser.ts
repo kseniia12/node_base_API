@@ -1,4 +1,6 @@
-export const checkDataUser = (f) => {
-    const {id, fullName, email, dob} = f
-   return({id, fullName, email, dob})
-}
+import { UserEntity } from "src/db/entities/user.entity";
+
+export const checkDataUser = (user: UserEntity): Partial<UserEntity> => {
+  delete user.password;
+  return { ...user };
+};
