@@ -6,12 +6,14 @@ import {
   editUsersByIdServices,
   deleteUserByIdServices,
   loginUsersServices,
+  getAllUsersServices,
 } from "../services/userServices";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const user = await createUsersServices(req.body);
-    const token = generateAccessToken(user);
+    const checkUser = checkDataUser(user);
+    const token = generateAccessToken(checkUser);
     res.status(201).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -41,10 +43,11 @@ export const getAllUsers = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const user = req.user;
   try {
-    const checkUser = checkDataUser(user);
-    res.json(checkUser);
+    if (req.user.id) {
+      const users = await getAllUsersServices();
+      res.json(users);
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -56,7 +59,8 @@ export const getUserById = async (
 ): Promise<void> => {
   try {
     const user = req.user;
-    res.json(user);
+    const checkUser = checkDataUser(user);
+    res.json(checkUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -68,7 +72,8 @@ export const editUserById = async (
 ): Promise<void> => {
   try {
     const user = await editUsersByIdServices(req.user.id, req.body);
-    res.json(user);
+    const checkUser = checkDataUser(user);
+    res.json(checkUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -79,8 +84,8 @@ export const deleteUserById = async (
   res: Response,
 ): Promise<void> => {
   try {
-    await deleteUserByIdServices(req.params.id);
-    res.status(204).send();
+    await deleteUserByIdServices(req.user.id);
+    res.status(204).send("Удален");
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
