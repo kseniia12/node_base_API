@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-
 import { checkDataUser } from "../utils/checkDataUser";
 import { generateAccessToken } from "../middlewares/generateAccessToken";
 import {
@@ -8,21 +7,10 @@ import {
   deleteUserByIdServices,
   loginUsersServices,
 } from "../services/userServices";
-import { hashPassword } from "../utils/hashing";
 
-export const createUser = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const createUser = async (req: Request, res: Response) => {
   try {
-    const { fullName, email, password, dob } = req.body;
-    const hashedPassword = hashPassword(password);
-    const user = await createUsersServices({
-      fullName,
-      email,
-      password: hashedPassword,
-      dob,
-    });
+    const user = await createUsersServices(req.body);
     const token = generateAccessToken(user);
     res.status(201).json({ user, token });
   } catch (error) {
@@ -55,7 +43,6 @@ export const getAllUsers = async (
 ): Promise<void> => {
   const user = req.user;
   try {
-    console.log("dededed", user);
     const checkUser = checkDataUser(user);
     res.json(checkUser);
   } catch (error) {
@@ -80,7 +67,7 @@ export const editUserById = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const user = await editUsersByIdServices(req.params.id, req.body);
+    const user = await editUsersByIdServices(req.user.id, req.body);
     res.json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -1,17 +1,21 @@
 import { verifyPassword } from "../utils/hashing";
 import { userRepository } from "../repository/userRepository";
-import jwt from 'jsonwebtoken';
 import * as dotenv from "dotenv";
-import { checkDataUser } from "../utils/checkDataUser";
+import { hashPassword } from "../utils/hashing";
 dotenv.config();
 
 export const createUsersServices = async (userData) => {
-  console.log(userData);
-  const newUser = userRepository.create(userData);
-  return await userRepository.save(newUser[0]);
+  const hashedPassword = hashPassword(userData.password);
+  const newUser = userRepository.create({
+    fullName: userData.fullName,
+    email: userData.email,
+    password: hashedPassword,
+    dob: userData.dob,
+  });
+  return userRepository.save(newUser);
 };
 
-export const loginUsersServices = async (email, password) => {
+export const loginUsersServices = async (email: string, password: string) => {
   const user = await userRepository.findOne({ where: { email } });
   if (!user) {
     throw new Error("Пользователь не найден");
@@ -32,15 +36,10 @@ export const getUsersByIdServices = async (id) => {
 };
 
 export const editUsersByIdServices = async (id, userData) => {
-  await userRepository.update({id}, userData);
-  return await userRepository.findOneBy({id});
+  const u = await userRepository.findOneBy({ id });
+  return userRepository.save({ ...u, ...userData });
 };
 
 export const deleteUserByIdServices = async (id) => {
   await userRepository.delete(id);
 };
-
-
-
-// const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-// return { token };
