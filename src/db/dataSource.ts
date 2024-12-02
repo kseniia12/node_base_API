@@ -1,13 +1,13 @@
 import { DataSource } from "typeorm";
-import * as dotenv from "dotenv";
-dotenv.config();
+
+import config from "../config/config";
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || "5432", 10),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
+  host: config.database.host,
+  port: Number(config.database.port),
+  username: config.database.username,
+  password: config.database.password,
+  database: config.database.database,
   synchronize: false,
   logging: false,
   entities: [`${__dirname}/entities/**/*{.ts,.js}`],

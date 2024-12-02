@@ -1,17 +1,14 @@
 import * as crypto from "crypto";
 
 export const hashPassword = (password: string): string => {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, "sha512")
-    .toString("hex");
-  return `${salt}:${hash}`;
+  const salt = "ght";
+  const hash = crypto.createHmac("sha512", salt).update(password).digest("hex");
+  return hash;
 };
 
 export const verifyPassword = (password: string, hash: string): boolean => {
-  const [salt, key] = hash.split(":");
-  const hashedPassword = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, "sha512")
-    .toString("hex");
-  return key === hashedPassword;
+  const newPassword = hashPassword(password);
+  console.log("newPassword", newPassword);
+  console.log("hash", hash);
+  return newPassword === hash;
 };

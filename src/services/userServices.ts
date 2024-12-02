@@ -17,10 +17,12 @@ export const createUsersServices = async (userData) => {
 
 export const loginUsersServices = async (email: string, password: string) => {
   const user = await userRepository.findOne({ where: { email } });
+
   if (!user) {
     throw new Error("Пользователь не найден");
   }
   const isValid = verifyPassword(password, user.password);
+
   if (!isValid) {
     throw new Error("Неверный пароль");
   }

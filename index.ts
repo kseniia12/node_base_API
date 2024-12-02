@@ -1,9 +1,9 @@
 import * as express from "express";
-import * as dotenv from "dotenv";
+
 import "./src/types/requestOverride";
 import { AppDataSource } from "./src/db/dataSource";
 import allRouter from "./src/routes/allRoutes";
-dotenv.config();
+import config from "./src/config/config";
 
 const app = express();
 
@@ -17,6 +17,6 @@ AppDataSource.initialize()
   })
   .catch((error) => console.log(error));
 
-app.listen(process.env.PORT, function () {
+app.listen(config.server.port, function () {
   console.log("Сервер подключен");
 });

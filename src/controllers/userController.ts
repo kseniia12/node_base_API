@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { checkDataUser } from "../utils/checkDataUser";
+import { formDataUser } from "../utils/checkDataUser";
 import { generateAccessToken } from "../middlewares/generateAccessToken";
 import {
   createUsersServices,
@@ -9,10 +9,13 @@ import {
   getAllUsersServices,
 } from "../services/userServices";
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const user = await createUsersServices(req.body);
-    const checkUser = checkDataUser(user);
+    const checkUser = formDataUser(user);
     const token = generateAccessToken(checkUser);
     res.status(201).json({ user, token });
   } catch (error) {
@@ -27,7 +30,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       throw new Error("User not found");
     }
-    const checkUser = checkDataUser(user);
+    const checkUser = formDataUser(user);
     const token = generateAccessToken(checkUser);
     res.status(201).json({ user, token });
   } catch (error) {
@@ -59,7 +62,7 @@ export const getUserById = async (
 ): Promise<void> => {
   try {
     const user = req.user;
-    const checkUser = checkDataUser(user);
+    const checkUser = formDataUser(user);
     res.json(checkUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -72,7 +75,7 @@ export const editUserById = async (
 ): Promise<void> => {
   try {
     const user = await editUsersByIdServices(req.user.id, req.body);
-    const checkUser = checkDataUser(user);
+    const checkUser = formDataUser(user);
     res.json(checkUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
