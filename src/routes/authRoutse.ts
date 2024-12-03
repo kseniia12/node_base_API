@@ -13,7 +13,7 @@ import {
   userRegistrationSchema,
   validate,
 } from "../utils/validation";
-import { authenticateToken } from "../middlewares/authMiddleware";
+import authenticateToken from "../middlewares/authMiddleware";
 
 export const authRouter = Router();
 export const userRouter = Router();

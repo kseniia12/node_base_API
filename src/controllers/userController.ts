@@ -16,7 +16,7 @@ export const createUser = async (
   try {
     const user = await createUsersServices(req.body);
     const checkUser = formDataUser(user);
-    const token = generateAccessToken(checkUser);
+    const token = await generateAccessToken(checkUser);
     res.status(201).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -31,7 +31,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       throw new Error("User not found");
     }
     const checkUser = formDataUser(user);
-    const token = generateAccessToken(checkUser);
+    const token = await generateAccessToken(checkUser);
     res.status(201).json({ user, token });
   } catch (error) {
     let status = 500;
