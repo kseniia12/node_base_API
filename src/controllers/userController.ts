@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { formDataUser } from "../utils/checkDataUser";
-import { generateAccessToken } from "../middlewares/generateAccessToken";
+import { generateAccessToken } from "../utils/utilsToken";
 import {
   createUsersServices,
   editUsersByIdServices,

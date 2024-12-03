@@ -1,5 +1,6 @@
-import { userRouter, authRouter } from "./authRoutse";
+import { authRouter } from "./authRoutse";
 import { Router } from "express";
+import { userRouter } from "./userRoutes";
 const allRouter = Router();
 
 allRouter.use("/auth", authRouter);

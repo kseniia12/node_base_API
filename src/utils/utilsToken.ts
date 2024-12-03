@@ -17,3 +17,16 @@ export const generateAccessToken = async (user: Partial<UserEntity>) => {
     );
   });
 };
+
+export const jwtVerifyToken = async (
+  token: string,
+): Promise<{ id: number }> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, config.token.secret, (err, token) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(token as { id: number });
+    });
+  });
+};
